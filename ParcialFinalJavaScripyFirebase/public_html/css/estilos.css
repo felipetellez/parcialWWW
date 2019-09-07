@@ -1,0 +1,4 @@
+form input,select:invalid{
+    border: solid #D31F6B;
+
+   }

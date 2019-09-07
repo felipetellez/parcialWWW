@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ejercicio Formulario</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/estilos.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="js/funciones.js" ></script>
+        <link rel="shortcut icon" href="#">
+       
+    </head>
+    <body>
+       
+        
+        <div class="container">
+            <form id="idForm" class="was-validated" method="POST" action="">   
+                
+                <h1>
+                    Formulario Examen 
+                </h1>
+                <div class="form-group">
+                    <label for="idNombre">Nombre: (*)</label>
+                    <div class="input-group">
+                        <input class="form-control" type="text"  id="idNombre" name="nombre" pattern="[A-Za-z ]*" minlength="4" aria-describedby="nombreAyuda" required>                      
+                    </div>
+                    <small id="nombreAyuda" class="form-text text-muted">
+                        El nombre deber ser de minimo  de 4 caracteres y contener solo letras.
+                    </small>
+                </div> 
+
+                <div class="form-group">
+                    <label for="descripccion">Descripción:</label>
+                    <div class="input-group">
+                        <input type="text"  class="form-control" id="idDescripcion" name="descripcion" minlength="4" aria-describedby="descripcionAyuda" required>
+                    </div>
+                    <small id="descripcionAyuda" class="form-text text-muted">
+                        La Descripcion deber ser de minimo  de 4 caracteres.
+                    </small>   
+                </div>
+
+                <div class="form-group">
+                    <label for="FechaNacimiento"> Fecha de nacimiento: (*)</label>
+                    <div class="input-group">
+                    <input class="form-control" type="date"  id="idFechaNacimiento" name="FechaNacimiento" min='2001-01-01'required>
+                    </div>
+                    <small id="fechaAyuda" class="form-text text-muted">
+                        La fecha debe ser mayor al año 2000.
+                    </small>  
+                </div>              
+                <div class="form-group">
+                    <label for="idDepartamento">Departamento: (*)</label>
+                    <div class="input-group">
+                        <select class="form-control" id="idDepartamento" required>
+                            <option value="">Seleccione un departamento</option>
+                        </select>
+                    </div>
+                </div>       
+                <div class="form-group">
+                    <label for="idMunicipio">Municipio: (*)</label>
+                    <div class="input-group">
+                        <select class="form-control" id="idMunicipio" required>
+                            <option value="">Seleccione un municipio</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="idEdad">Edad (*):</label> 
+                    <div class="input-group">
+                       <input class="form-control" id="idEdad" type="number" min="1" aria-describedby="edadAyuda" required>
+                    </div>
+                    <small id="edadAyuda" class="form-text text-muted">
+                        La edad debe ser un numero mayor a 0.
+                    </small>   
+                </div>
+                <div>
+                    <button type="submit" class="bt btn-primary" sendMessage>Enviar</button>
+                </div>
+            </form>
+        </div>
+
+         <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+    
+        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-app.js"></script>
+    
+        <!-- Add Firebase products that you want to use -->
+        <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
+        <script>
+
+            var firebaseConfig = {
+                apiKey: "AIzaSyCD_w9He48wHdAjX0KAEfe7wRkePM5f2nU",
+                authDomain: "examen-7898c.firebaseapp.com",
+                databaseURL: "https://examen-7898c.firebaseio.com",
+                projectId: "examen-7898c",
+                storageBucket: "",
+                messagingSenderId: "338943552984",
+                appId: "1:338943552984:web:7a01589fb6bca4e22416ad"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+
+            
+            function getInputVal(id){
+                return document.getElementById(id).value;
+            }
+
+            document.getElementById('idForm').addEventListener('submit', formSubmit); // Al momento de enviar el formulario, ejecuta la función "contactform"
+
+            function formSubmit(event) {
+            event.preventDefault(); // Prevenimos el comportamiento por defecto de un formulario (Enviar por URL los parametros)
+
+            var nombre = getInputVal('idNombre'); // Obtenemos la referencia a cada uno de nuestros elementos del formulario
+            var descripcion = getInputVal('idDescripcion');
+            var fecha = getInputVal('idFechaNacimiento');
+            var idDepartamento = document.getElementById('idDepartamento');
+            var departamento = idDepartamento.options[idDepartamento.selectedIndex].text;
+            var idCiudad = document.getElementById('idMunicipio');
+            var ciudad = idCiudad.options[idCiudad.selectedIndex].text;
+            var edad = getInputVal('idEdad');
+
+            console.log(nombre);
+            console.log(descripcion);
+            console.log(fecha);
+            console.log(departamento);
+            console.log(ciudad);
+            console.log(edad);
+
+            sendMessage(nombre, descripcion, fecha, departamento, ciudad, edad);
+
+            document.getElementById('idForm').reset(); // borramos todos los campos. 
+            }
+
+            var formMessage = firebase.database().ref('registro');
+            function sendMessage(nombre, descripcion, fecha, departamento, ciudad, edad ) {
+                var newFormMessage = formMessage.push();
+                newFormMessage.set({
+                nombre: nombre,
+                descripcion: descripcion,
+                fecha: fecha,
+                departamento: departamento,
+                ciudad: ciudad,
+                edad: edad,
+                });
+            }
+
+        </script>
+  
+    </body>
+    
+
+    
+<html>
+        
